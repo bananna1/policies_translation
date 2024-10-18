@@ -1,21 +1,36 @@
-use std::env;
 use std::fs;
 use regex::Regex;
 use crate::policy::Policy;
 
-pub fn parse_input_text(file_path: &String) -> Vec<Policy> {
-    let current_dir = env::current_dir().unwrap();
-    println!("Current directory: {:?}", current_dir);
+pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
 
     let text = fs::read_to_string(file_path)
-        .expect("Couldn't read file.");
+        .expect("Could not read file.");
 
     // parse text in lines
     let lines = text.split("\n");
 
-    let chapter_title_re = Regex::new(r"^\s*CHAPTER (2|3|4)\.\s+[A-Z\- ]+\s*$").unwrap();
-    let subsection_re = Regex::new(r"^\s*\d+\.\s+[A-Z\-].*\s*$").unwrap();
-    let paragraph_re = Regex::new(r"^\s*[a-z]\.\s+[A-Z\- ].*\s*$").unwrap();
+    let chapter_title_re;
+    match Regex::new(r"^\s*CHAPTER (2|3|4)\.\s+[A-Z\- ]+\s*$") {
+        Ok(re) => {
+            chapter_title_re = re;
+        }
+        Err(_) => return Err(String::from("Could not elaborate regular expression"))
+    }
+    let subsection_re;
+    match Regex::new(r"^\s*\d+\.\s+[A-Z\-].*\s*$") {
+        Ok(re) => {
+            subsection_re = re;
+        }
+        Err(_) => return Err(String::from("Could not elaborate regular expression"))
+    }
+    let paragraph_re;
+    match Regex::new(r"^\s*[a-z]\.\s+[A-Z\- ].*\s*$") {
+        Ok(re) => {
+            paragraph_re = re;
+        }
+        Err(_) => return Err(String::from("Could not elaborate regular expression"))
+    }
 
     let mut policies: Vec<Policy> = Vec::new();
 
@@ -46,20 +61,58 @@ pub fn parse_input_text(file_path: &String) -> Vec<Policy> {
         // Check for a new subsection if in target chapter
         if in_target_chapter && subsection_re.is_match(trimmed_line) {
             if !current_paragraph.is_empty() {
-                let policy = build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph);
+                println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
+                println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
+                println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
+                let policy;
+                match build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph) {
+                    Ok(p) => {
+                        policy = p;
+                    },
+                    Err(s) => {
+                        return Err(s)
+                    }
+                }
                 policies.push(policy);
                 //println!("Paragraph: {}{}\n", current_subsection_number.as_str(), current_paragraph);
             }
             if !current_subsection.is_empty() {
                 //println!("Subsection: {}\n", current_subsection);
+                let policy;
                 if current_paragraph.is_empty() {
-                    let policy = build_policy_from_subsection(&current_subsection_number, &current_subsection);
+                    match build_policy_from_subsection(&current_subsection_number, &current_subsection) {
+                        Ok(p) => {
+                            policy = p;
+                        },
+                        Err(s) => {
+                            return Err(s);
+                        }
+                    }
                     policies.push(policy);
                 }
             }
             current_subsection = String::from(trimmed_line);
-            let subsection_re_num = Regex::new(r"^\s*(\d+)\.\s+.+$").unwrap();
-            current_subsection_number = String::from(subsection_re_num.captures(line).unwrap().get(1).unwrap().as_str());
+            let subsection_re_num;
+            match Regex::new(r"^\s*(\d+)\.\s+.+$") {
+                Ok(re) => {
+                    subsection_re_num = re;
+                }
+                Err(_) => return Err(String::from("Could not elaborate regular expression"))
+            }
+
+
+            match subsection_re_num.captures(line) {
+                Some(pre_num) => {
+                    match pre_num.get(1) {
+                        Some(num) => {
+                            current_subsection_number = String::from(num.as_str());
+                        },
+                        None => return Err(String::from("Couldn't extract subsection number"))
+                    }
+                },
+                None => return Err(String::from("Couldn't extract subsection number"))
+            }
+            println!("CURRENT SUBSECTION NUMBER: {}", current_subsection_number);
 
             current_paragraph.clear(); // Reset paragraph when subsection changes
             continue;
@@ -69,13 +122,41 @@ pub fn parse_input_text(file_path: &String) -> Vec<Policy> {
             // Check for a new paragraph if in target chapter
             if in_target_chapter && paragraph_re.is_match(trimmed_line) {
                 if !current_paragraph.is_empty() {
-                    let policy = build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph);
+                    println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
+                    println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
+                    println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
+                    let policy;
+                    match build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph) {
+                        Ok(p) => {
+                            policy = p;
+                        },
+                        Err(s) => {
+                            return Err(s);
+                        }
+                    }
                     policies.push(policy);
                     //println!("Paragraph: {}{}\n", current_subsection_number.as_str(), current_paragraph);
                 }
                 current_paragraph = String::from(trimmed_line);
-                let paragraph_re_num = Regex::new(r"^\s*([a-z])\.\s+.+$").unwrap();
-                current_paragraph_number = String::from(paragraph_re_num.captures(line).unwrap().get(1).unwrap().as_str());
+                let paragraph_re_num;
+                match Regex::new(r"^\s*([a-z])\.\s+.+$") {
+                    Ok(re) => {
+                        paragraph_re_num = re;
+                    }
+                    Err(_) => return Err(String::from("Could not elaborate regular expression"))
+                }
+                match paragraph_re_num.captures(line) {
+                    Some(pre_num) => {
+                        match pre_num.get(1) {
+                            Some(num) => {
+                                current_paragraph_number = String::from(num.as_str());
+                            },
+                            None => return Err(String::from("Could not extract paragraph number"))
+                        }
+                    },
+                    None => return Err(String::from("Couldn't extract paragraph number"))
+                }
+                println!("CURRENT PARAGRAPH NUMBER: {}", current_paragraph_number);
                 continue;
             }
 
@@ -96,48 +177,86 @@ pub fn parse_input_text(file_path: &String) -> Vec<Policy> {
     if !current_subsection.is_empty() {
         //println!("Subsection: {}\n\n", current_subsection);
         if current_paragraph.is_empty() {
-            let policy = build_policy_from_subsection(&current_subsection_number, &current_subsection);
+            let policy;
+            match build_policy_from_subsection(&current_subsection_number, &current_subsection) {
+                Ok(p) => {
+                    policy = p;
+                },
+                Err(s) => return Err(s)
+
+            }
             policies.push(policy);
         }
     }
     if !current_paragraph.is_empty() {
         if !current_paragraph.is_empty() {
-            let policy = build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph);
+            println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
+            println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
+            println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
+            let policy;
+            match build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph) {
+                Ok(p) => {
+                    policy = p;
+                },
+                Err(s) => return Err(s)
+            }
             policies.push(policy);
             //println!("Paragraph: {}{}\n", current_subsection_number.as_str(), current_paragraph);
         }
     }
-
-    /*
-    for policy in &policies {
-        println!("{}\n", policy)
-    }
-    */
-
-    policies
+    Ok(policies)
 
 }
 
-fn build_policy_from_paragraph(subsection_number: &String, paragraph_number: &String, subsection: &String, paragraph: &String) -> Policy {
+fn build_policy_from_paragraph(subsection_number: &String, paragraph_number: &String, subsection: &String, paragraph: &String) -> Result<Policy, String> {
+    println!("Subsection number: {}; paragraph number: {}", subsection_number, paragraph_number);
     let id = format!("{}{}", subsection_number, paragraph_number);
 
-    let first_line_re = Regex::new(r"^\s*\d+\.\s+(.+)$").unwrap();
+    let first_line_re;
+    match Regex::new(r"^\s*\d+\.\s+(.+)$") {
+        Ok(re) => {
+            first_line_re = re;
+        },
+        Err(_) => return Err(String::from("Could not elaborate regular expression"))
+    }
 
     let mut lines = subsection.lines();
-    let mut label = "";
+    let mut label = String::new();
     let mut context = String::new();
 
     if let Some(first_line) = lines.next() {
-        label = first_line_re.captures(first_line).unwrap().get(1).unwrap().as_str();
-        //println!("label: {}", label);
-
+        match extract_label(first_line, first_line_re) {
+            Ok(l) => {
+                label = l;
+            }
+            Err(s) => return Err(s)
+        }
         context = lines.collect::<Vec<&str>>().join(" ");
-        //println!("Context:\n{}", context);
+        //println!("Context:\n{}", body);
     }
 
     // Exclude the policy id from the body
-    let paragraph_re_trim = Regex::new(r"(?s)^\s*[a-z]\.\s+(.+)$").unwrap();
-    let mut body = String::from(paragraph_re_trim.captures(paragraph).unwrap().get(1).unwrap().as_str());
+    let paragraph_re_trim;
+    match Regex::new(r"(?s)^\s*[a-z]\.\s+(.+)$") {
+        Ok(re) => {
+            paragraph_re_trim = re;
+        }
+        Err(_) => return Err(String::from("Could not elaborate regular expressions"))
+    }
+
+    let mut body: String;
+    match paragraph_re_trim.captures(paragraph) {
+        Some(pre_body) => {
+            match pre_body.get(1) {
+                Some(b) => {
+                    body = String::from(b.as_str());
+                },
+                None => return Err(String::from("Could not extract paragraph body"))
+            }
+        },
+        None => return Err(String::from("Could not extract paragraph body"))
+    }
+
 
     // split the context into sentences
     let sentences: Vec<&str> = context.split(". ").collect();
@@ -145,8 +264,20 @@ fn build_policy_from_paragraph(subsection_number: &String, paragraph_number: &St
         let last_sentence = sentences[sentences.len() - 1];
 
         // Check if the last sentence of the context contains the words "Component(s)" or "shall"
-        let components_re = Regex::new(r".*Component.*").unwrap();
-        let shall_re = Regex::new(r".*shall.*").unwrap();
+        let components_re;
+        match Regex::new(r".*Component.*") {
+            Ok(re) => {
+                components_re = re;
+            }
+            Err(_) => return Err(String::from("Could not elaborate regular expression"))
+        }
+        let shall_re;
+        match Regex::new(r".*shall.*") {
+            Ok(re) => {
+                shall_re = re;
+            }
+            Err(_) => return Err(String::from("Could not elaborate regular expression"))
+        }
 
         // If so, remove the last sentence from the context and add it to the body of the policy
         if components_re.is_match(&last_sentence) || shall_re.is_match(&last_sentence) {
@@ -161,31 +292,54 @@ fn build_policy_from_paragraph(subsection_number: &String, paragraph_number: &St
         context,
         body,
     };
-    policy
+    Ok(policy)
 }
 
-fn build_policy_from_subsection(subsection_number: &String, subsection: &String, ) -> Policy {
-    let mut id = String::from(subsection_number);
+fn build_policy_from_subsection(subsection_number: &String, subsection: &String, ) -> Result<Policy, String> {
+    println!("Subsection number: {}", subsection_number);
+    let id = String::from(subsection_number);
 
-    let first_line_re = Regex::new(r"^\s*\d+\.\s+(.+)$").unwrap();
+
+    let first_line_re;
+    match Regex::new(r"^\s*\d+\.\s+(.+)$") {
+        Ok(re) => {
+            first_line_re = re;
+        }
+        Err(_) => return Err(String::from("Could not elaborate regular expression"))
+    }
 
     let mut lines = subsection.lines();
-    let mut label = "";
+    let mut label = String::new();
     let mut body = String::new();
 
     if let Some(first_line) = lines.next() {
-        label = first_line_re.captures(first_line).unwrap().get(1).unwrap().as_str();
-        //println!("label: {}", label);
-
+        match extract_label(first_line, first_line_re) {
+            Ok(l) => {
+                label = l;
+            }
+            Err(s) => return Err(s)
+        }
         body = lines.collect::<Vec<&str>>().join(" ");
         //println!("Context:\n{}", body);
     }
 
     let policy = Policy {
         id,
-        label: String::from(label),
+        label,
         context: String::new(),
         body,
     };
-    policy
+    Ok(policy)
+}
+
+fn extract_label(line: &str, regular_expr: Regex) -> Result<String, String> {
+    match regular_expr.captures(line) {
+        Some(pre_label) => {
+            match pre_label.get(1) {
+                Some(l) => Ok(String::from(l.as_str())),
+                None => Err(String::from("Could not extract label"))
+            }
+        },
+        None => Err(String::from("Could not extract label"))
+    }
 }

@@ -1,6 +1,7 @@
 use std::fmt;
 use serde::{Serialize, Deserialize};
 use serde_json;
+
 #[derive(Serialize)]
 pub struct Policy {
     pub id: String,
