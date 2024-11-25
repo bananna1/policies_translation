@@ -1,6 +1,6 @@
 use std::fs;
 use regex::Regex;
-use crate::policy::Policy;
+use crate::policy_extraction::policy::Policy;
 
 pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
 
@@ -54,16 +54,16 @@ pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
         // Exiting target chapter
         if trimmed_line.starts_with("CHAPTER") && !chapter_title_re.is_match(trimmed_line) {
             in_target_chapter = false;
-            println!("{}. Exiting now", trimmed_line);
+            //println!("{}. Exiting now", trimmed_line);
             continue;
         }
 
         // Check for a new subsection if in target chapter
         if in_target_chapter && subsection_re.is_match(trimmed_line) {
             if !current_paragraph.is_empty() {
-                println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
-                println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
-                println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
+                //println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
+                //println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
+                //println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
                 let policy;
                 match build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph) {
                     Ok(p) => {
@@ -112,7 +112,7 @@ pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
                 },
                 None => return Err(String::from("Couldn't extract subsection number"))
             }
-            println!("CURRENT SUBSECTION NUMBER: {}", current_subsection_number);
+            //println!("CURRENT SUBSECTION NUMBER: {}", current_subsection_number);
 
             current_paragraph.clear(); // Reset paragraph when subsection changes
             continue;
@@ -122,9 +122,9 @@ pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
             // Check for a new paragraph if in target chapter
             if in_target_chapter && paragraph_re.is_match(trimmed_line) {
                 if !current_paragraph.is_empty() {
-                    println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
-                    println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
-                    println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
+                    //println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
+                    //println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
+                    //println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
                     let policy;
                     match build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph) {
                         Ok(p) => {
@@ -156,7 +156,7 @@ pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
                     },
                     None => return Err(String::from("Couldn't extract paragraph number"))
                 }
-                println!("CURRENT PARAGRAPH NUMBER: {}", current_paragraph_number);
+                //println!("CURRENT PARAGRAPH NUMBER: {}", current_paragraph_number);
                 continue;
             }
 
@@ -190,9 +190,9 @@ pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
     }
     if !current_paragraph.is_empty() {
         if !current_paragraph.is_empty() {
-            println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
-            println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
-            println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
+            //println!("CURRENT SUBSECTION NUMBER JUST BEFORE METHOD CALLING: {}", current_subsection_number);
+            //println!("CURRENT PARAGRAPH NUMBER JUST BEFORE METHOD CALLING: {}", current_paragraph_number);
+            //println!("CURRENT PARAGRAPH:\n{}", current_paragraph);
             let policy;
             match build_policy_from_paragraph(&current_subsection_number, &current_paragraph_number, &current_subsection, &current_paragraph) {
                 Ok(p) => {
@@ -209,7 +209,7 @@ pub fn parse_input_text(file_path: &String) -> Result<Vec<Policy>, String> {
 }
 
 fn build_policy_from_paragraph(subsection_number: &String, paragraph_number: &String, subsection: &String, paragraph: &String) -> Result<Policy, String> {
-    println!("Subsection number: {}; paragraph number: {}", subsection_number, paragraph_number);
+    //println!("Subsection number: {}; paragraph number: {}", subsection_number, paragraph_number);
     let id = format!("{}{}", subsection_number, paragraph_number);
 
     let first_line_re;
@@ -296,7 +296,7 @@ fn build_policy_from_paragraph(subsection_number: &String, paragraph_number: &St
 }
 
 fn build_policy_from_subsection(subsection_number: &String, subsection: &String, ) -> Result<Policy, String> {
-    println!("Subsection number: {}", subsection_number);
+    //println!("Subsection number: {}", subsection_number);
     let id = String::from(subsection_number);
 
 
