@@ -8,15 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c3746bf-2356-424b-a55f-2fe5fab81e0d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/policy_translation/mod.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/policy_translation/model_choice/translation_chatgpt.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/policies_json.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/policies_json.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/policies_ALFA_ChatGPT.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/policies_ALFA_ChatGPT.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/policies_ALFA_Mistral.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/policies_ALFA_Mistral.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parse_input_text.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/policy_extraction/parse_input_text.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/policy.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/policy_extraction/policy.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/policy_translation/model_choice/translation_gemini.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/policy_translation/model_choice/translation_gemini.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/policy_translation/translate_policies.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/policy_translation/translate_policies.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,9 +44,10 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/bananna/Documents/GitHub/policies_translation/src&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/bananna/Documents/GitHub/policies_translation&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -58,7 +56,7 @@
     &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
     &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
     &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -99,6 +97,21 @@
       <workItem from="1731506319075" duration="7269000" />
       <workItem from="1731592392656" duration="5579000" />
       <workItem from="1732009566058" duration="3081000" />
+      <workItem from="1732549058546" duration="42000" />
+      <workItem from="1732610758325" duration="14851000" />
+      <workItem from="1732692168092" duration="9443000" />
+      <workItem from="1732777975267" duration="4396000" />
+      <workItem from="1732890881798" duration="1034000" />
+      <workItem from="1733211506784" duration="641000" />
+      <workItem from="1733299151925" duration="1533000" />
+      <workItem from="1733386547454" duration="7217000" />
+      <workItem from="1733729732052" duration="4561000" />
+      <workItem from="1733990134959" duration="629000" />
+      <workItem from="1734078624381" duration="7200000" />
+      <workItem from="1734967099072" duration="644000" />
+      <workItem from="1739914142905" duration="1400000" />
+      <workItem from="1740030144253" duration="8057000" />
+      <workItem from="1741778191183" duration="1527000" />
     </task>
     <servers />
   </component>

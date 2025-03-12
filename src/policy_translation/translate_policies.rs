@@ -29,6 +29,7 @@ pub fn translate_policies(policies_body: &Vec<String>, model: &String, policy_la
     }
 
     println!("Length: {}", i);
+    println!("{}", alfa_policies_string);
 
     let output_file_path = format!("/home/bananna/Documents/GitHub/policies_translation/output/policies_{}_{}.txt", policy_language, model);
 
